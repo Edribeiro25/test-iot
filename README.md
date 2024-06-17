@@ -37,5 +37,8 @@ Vagrant.configure(2) do |config|
           end
 
 end
- curl -sfL https://get.k3s.io | sh -
+kubectl get nodes
+E0617 13:42:34.993153    3166 memcache.go:265] couldn't get current server API group list: Get "https://127.0.0.1:6443/api?timeout=32s": net/http: TLS handshake timeout
+E0617 13:42:46.642622    3166 memcache.go:265] couldn't get current server API group list: Get "https://127.0.0.1:6443/api?timeout=32s": net/http: TLS handshake timeout
+
 
