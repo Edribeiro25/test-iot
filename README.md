@@ -37,11 +37,5 @@ Vagrant.configure(2) do |config|
           end
 
 end
-There was an error while executing `VBoxManage`, a CLI used by Vagrant
-for controlling VirtualBox. The command and stderr is shown below.
-
-Command: ["startvm", "0e4d879e-2dab-4f91-ae7a-23a5b01a6204", "--type", "headless"]
-
-Stderr: VBoxManage: error: VT-x is not available (VERR_VMX_NO_VMX)
-VBoxManage: error: Details: code NS_ERROR_FAILURE (0x80004005), component ConsoleWrap, interface IConsole
+ curl -sfL https://get.k3s.io | sh -
 
