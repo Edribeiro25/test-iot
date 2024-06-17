@@ -37,3 +37,16 @@ Vagrant.configure(2) do |config|
           end
 
 end
+Vagrant failed to initialize at a very early stage:
+
+There is a syntax error in the following Vagrantfile. The syntax error
+message is reproduced below for convenience:
+
+/home/eder/iot-test/Vagrantfile:4: syntax error, unexpected ':', expecting `end'
+...network "private_network", ip : "192.168.56.110"
+...                              ^
+/home/eder/iot-test/Vagrantfile:15: syntax error, unexpected ':', expecting `end'
+...network "private_network", ip : "192.168.56.111"
+...                              ^
+/home/eder/iot-test/Vagrantfile:23: syntax error, unexpected `end', expecting end-of-input
+  end
