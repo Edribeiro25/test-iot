@@ -43,5 +43,6 @@ E0617 13:42:46.642622    3166 memcache.go:265] couldn't get current server API g
 
 sudo ip link add eth1 type dummy && sudo ip addr add 192.168.56.110/24 dev eth1 && sudo ip link set eth1 up
   sudo yum -y install vim tree net-tools telnet git python3
+Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
 
 
