@@ -42,5 +42,6 @@ E0617 13:42:34.993153    3166 memcache.go:265] couldn't get current server API g
 E0617 13:42:46.642622    3166 memcache.go:265] couldn't get current server API group list: Get "https://127.0.0.1:6443/api?timeout=32s": net/http: TLS handshake timeout
 
 sudo ip link add eth1 type dummy && sudo ip addr add 192.168.56.110/24 dev eth1 && sudo ip link set eth1 up
+  sudo yum -y install vim tree net-tools telnet git python3
 
 
