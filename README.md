@@ -1,1 +1,36 @@
-The request is invalid: patch: Invalid value: "map[metadata:map[annotations:map[kubectl.kubernetes.io/last-applied-configuration:{\"apiVersion\":\"networking.k8s.io/v1\",\"kind\":\"Ingress\",\"metadata\":{\"annotations\":{},\"name\":\"web-ingress\",\"namespace\":\"default\"},\"spec\":{\"rules\":[{\"host\":\"app1.com\",\"http\":{\"paths\":[{\"backend\":{\"service\":{\"name\":\"svc-app1\",\"port\":{\"number\":80}}},\"path\":\"/\",\"pathType\":\"Prefix\"}]}},{\"host\":\"app2.com\",\"http\":{\"paths\":[{\"backend\":{\"service\":{\"name\":\"svc-app2\",\"number\":80,\"port\":null}},\"path\":\"/\",\"pathType\":\"Prefix\"}]}},{\"http\":{\"paths\":[{\"backend\":{\"service\":{\"name\":\"svc-app3\",\"port\":{\"number\":80}}},\"path\":\"/\",\"pathType\":\"Prefix\"}]}}]}}\n]] spec:map[rules:[map[host:app1.com http:map[paths:[map[backend:map[service:map[name:svc-app1 port:map[number:80]]] path:/ pathType:Prefix]]]] map[host:app2.com http:map[paths:[map[backend:map[service:map[name:svc-app2 number:80 port:<nil>]] path:/ pathType:Prefix]]]] map[http:map[paths:[map[backend:map[service:map[name:svc-app3 port:map[number:80]]] path:/ pathType:Prefix]]]]]]]": strict decoding error: unknown field "spec.rules[1].http.paths[0].backend.service.number"
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-app1
+            port:
+              number: 80
+
+  - host: app2.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-app2
+            port:
+              number: 80
+
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-app3
+            port: 
+              number: 80
