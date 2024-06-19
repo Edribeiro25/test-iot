@@ -47,6 +47,8 @@ Vagrant.configure("2") do |config|
     worker.vm.provision :shell, inline: worker_script
   end
 end
+
+
 kubectl get nodes -o wide
 E0619 06:48:48.263025   29086 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp [::1]:8080: connect: connection refused
 E0619 06:48:48.266209   29086 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp [::1]:8080: connect: connection refused
@@ -54,3 +56,14 @@ E0619 06:48:48.269633   29086 memcache.go:265] couldn't get current server API g
 E0619 06:48:48.274002   29086 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp [::1]:8080: connect: connection refused
 E0619 06:48:48.278967   29086 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp [::1]:8080: connect: connection refused
 The connection to the server localhost:8080 was refused - did you specify the right host or port?
+
+
+kubectl config view
+apiVersion: v1
+clusters: null
+contexts: null
+current-context: ""
+kind: Config
+preferences: {}
+users: null
+
