@@ -1,5 +1,4 @@
 Vagrant.configure("2") do |config|
-  # Common shell script for both server and worker
   common_script = <<-SHELL
   sudo yum -y install vim tree net-tools telnet git python3
   echo "autocmd filetype yaml setlocal ai ts=2 sw=2 et" > /home/vagrant/.vimrc
@@ -8,20 +7,18 @@ Vagrant.configure("2") do |config|
   sudo systemctl restart sshd
   SHELL
 
-  # Specific shell script for the server
   server_script = <<-SHELL
-  curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="--flannel-iface eth1" K3S_TOKEN="toktok" sh -
+  curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="--flannel-iface eth1" sh -
+  sudo cat /var/lib/rancher/k3s/server/node-token > /vagrant/token
   SHELL
 
-  # Specific shell script for the worker
   worker_script = <<-SHELL
-  curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="--flannel-iface eth1" K3S_TOKEN="toktok" K3S_URL=https://192.168.56.110:6443 sh -
+  TOKEN=$(cat /vagrant/token)
+  curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="--flannel-iface eth1" K3S_TOKEN=$TOKEN K3S_URL=https://192.168.56.110:6443 sh -
   SHELL
 
   config.vm.box = "rockylinux/9"
-  config.vm.box_url = "rockylinux/9"
 
-  # Server VM configuration
   config.vm.define "lletournS" do |server|
     server.vm.hostname = "lletournS"
     server.vm.network "private_network", ip: "192.168.56.110"
@@ -36,7 +33,6 @@ Vagrant.configure("2") do |config|
     server.vm.provision :shell, inline: server_script
   end
 
-  # Worker VM configuration
   config.vm.define "lletournSW" do |worker|
     worker.vm.hostname = "lletournSW"
     worker.vm.network "private_network", ip: "192.168.56.111"
