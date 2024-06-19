@@ -1,36 +1,21 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
 metadata:
-  name: web-ingress
+  name: private-browser-detection
 spec:
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: svc-app1
-            port:
-              number: 80
+  # Détecte les navigateurs privés en fonction de l'agent utilisateur
+  chain:
+    - Matcher:
+        TCPHost: "Host('your-domain.com')"
+        RequestHeaders:
+          Headers:
+            UserAgent:
+              - "Firefox Focus"
+              - "Vivaldi"
+              - "Brave"
+    - Redirect:
+        Scheme: "http"
+        Destination: "http://app3.your-domain.com"  # URL de redirection pour les navigateurs privés
+  # Rediriger vers app1 par défaut
+  defaultBackend: "svc-app1-backend"
 
-  - host: app2.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: svc-app2
-            port:
-              number: 80
-
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: svc-app3
-            port: 
-              number: 80
