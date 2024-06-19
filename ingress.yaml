@@ -5,34 +5,35 @@ metadata:
 spec:
   rules:
   - http:
-      paths:
-      - path: /
-        pathType: Prefix
       backend:
         service:
           name: svc-app1
           port:
             number: 80
-  - host: app2.com
-    http:
       paths:
       - path: /
         pathType: Prefix
+  - host: app2.com
+    http:
       backend:
         service:
           name: svc-app2
           port:
             number: 80
-  - annotations:
-      traefik.ingress.kubernetes.io/router.backendServices=app3-backend
-      traefik.ingress.kubernetes.io/providers.kubernetes.service.port=80
-      traefik.ingress.kubernetes.io/router.match.header.X-Forwarded-Proto=https
-    http:
       paths:
       - path: /
         pathType: Prefix
+  - annotations:
+      traefik.ingress.kubernetes.io/router.backendServices: app3-backend
+      traefik.ingress.kubernetes.io/providers.kubernetes.service.port: "80"  # Double quotes are needed for string values
+      traefik.ingress.kubernetes.io/router.match.header.X-Forwarded-Proto: https
+    http:
       backend:
         service:
           name: svc-app3
           port:
             number: 80
+      paths:
+      - path: /
+        pathType: Prefix
+
