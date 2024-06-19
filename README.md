@@ -137,4 +137,11 @@ spec:
         image: paulbouwer/hello-kubernetes
         ports:
         - containerPort: 8080
-     
+kubectl apply -f /vagrant/deployment/app1.yaml
+            echo -e "APP1 DONE"
+            kubectl apply -f /vagrant/deployment/app2.yaml
+            echo -e "APP2 DONE"
+            kubectl apply -f /vagrant/deployment/app3.yaml
+            echo -e "APP3 DONE"
+            kubectl apply -f /vagrant/deployment/ingress.yaml
+            echo -e "INGRESS DONE"
