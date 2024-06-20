@@ -1,2 +1,3 @@
- Failed Cluster Start: Failed to add one or more helper nodes: runtime failed to start node 'k3d-my-cluster-serverlb': docker failed to start container for node 'k3d-my-cluster-serverlb': Error response from daemon: driver failed programming external connectivity on endpoint k3d-my-cluster-serverlb (d2066c8d54df960ee55c4bda6944f6e9547abbce60df8cec4c7ba054e2e41b23): Error starting userland proxy: listen tcp4 0.0.0.0:6443: bind: address already in use 
- tcp6       0      0 :::6443                 :::*                    LISTEN      8893/k3s server
+error: resource mapping not found for name: "argocd-ingress" namespace: "" from "ingress.yaml": no matches for kind "Ingress" in version "extensions/v1beta1"
+ensure CRDs are installed first
+
