@@ -1,3 +1,7 @@
+
+
+helm install gitlab gitlab/gitlab --namespace gitlab -f values.yaml
+Error: INSTALLATION FAILED: repo gitlab not found
 helm install gitlab gitlab/gitlab --namespace gitlab -f values.yaml
 apiVersion: v1
 kind: Service
