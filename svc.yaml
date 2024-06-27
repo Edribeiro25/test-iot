@@ -1,8 +1,19 @@
 
+# Ajouter le dépôt GitLab
+helm repo add gitlab https://charts.gitlab.io/
 
+# Mettre à jour les dépôts
+helm repo update
+
+# Vérifier les charts disponibles
+helm search repo gitlab
+
+# Créer un namespace (s'il n'existe pas déjà)
+kubectl create namespace gitlab
+
+# Installer GitLab avec Helm
 helm install gitlab gitlab/gitlab --namespace gitlab -f values.yaml
-Error: INSTALLATION FAILED: repo gitlab not found
-helm install gitlab gitlab/gitlab --namespace gitlab -f values.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
