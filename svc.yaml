@@ -1,3 +1,4 @@
+helm install gitlab gitlab/gitlab --namespace gitlab -f values.yaml
 apiVersion: v1
 kind: Service
 metadata:
