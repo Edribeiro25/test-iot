@@ -4,6 +4,41 @@ APP=bonus
 
 echo -e "\nCreating scripts...\n"
 
+cat << 'EOF' > deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wil-playground
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wil-playground
+  template:
+    metadata:
+      labels:
+        app: wil-playground
+    spec:
+      containers:
+      - name: wil-playground
+        image: wil42/playground:v1
+        ports:
+        - containerPort: 8888
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wil-playground
+  namespace: dev
+spec:
+  ports:
+  - port: 8888
+    targetPort: 8888
+  selector:
+    app: wil-playground
+EOF
+
 cat << 'EOF' > argo-application.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -13,7 +48,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'GITLAB_URL'
+    repoURL: 'http://gitlab-webservice-default.gitlab.svc:8181/root/wil_app.git'
     targetRevision: HEAD
     path: . 
   destination:
@@ -24,6 +59,32 @@ spec:
       prune: true
       selfHeal: true
 EOF
+
+cat << 'SCRIPT' > gitlabfwd.sh
+#!/bin/bash
+
+echo -e "Starting port-forwarding...\n"
+
+./kubectl port-forward svc/gitlab-webservice-default -n gitlab 9440:8181 &>/dev/null &
+GITLAB_PID=$!
+
+echo -e "gitlab :\thttp://localhost:9440\n| user:\t\troot\n| password:\t$(./kubectl get secret --namespace=gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo)\n\n"
+
+cleanup() {
+  echo "Stopping port-forwarding..."
+  kill $GITLAB_PID
+  wait $GITLAB_PID 2>/dev/null
+  echo "Port-forwarding stopped."
+}
+
+# Set trap to call cleanup on script exit
+trap cleanup EXIT
+
+# Keep script running
+while :; do
+  sleep 1
+done
+SCRIPT
 
 cat << 'SCRIPT' > portforward.sh
 #!/bin/bash
@@ -36,12 +97,12 @@ ARGOC_PID=$!
 ./kubectl port-forward svc/wil-playground -n dev 8888:8888 &>/dev/null &
 PLAYGROUND_PID=$!
 
-./kubectl port-forward svc/gitlab-webservice-default -n gitlab 9440:8181
+./kubectl port-forward svc/gitlab-webservice-default -n gitlab 9440:8181 &>/dev/null &
 GITLAB_PID=$!
 
 echo -e "wil-playground :\thttp://localhost:8888"
 echo -e "argocd :\t\thttp://localhost:8080\n| user:\t\tadmin\n| password:\t$(./kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)\n"
-echo -e "gitlab :\tGITLAB_URL:PORT\n| user:\t\troot\n| password:\t$(./kubectl get secret --namespace=gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo)\n\n"
+echo -e "gitlab :\thttp://localhost:9440\n| user:\t\troot\n| password:\t$(./kubectl get secret --namespace=gitlab gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo)\n\n"
 
 cleanup() {
   echo "Stopping port-forwarding..."
@@ -62,21 +123,22 @@ SCRIPT
 cat << 'SCRIPT' > clean.sh
 #!/bin/bash
 
-rm -f kubectl portforward.sh argo-application.yaml 
+rm -f kubectl portforward.sh gitlabfwd.sh argo-application.yaml deployment.yaml
 
-k3d cluster delete $APP
+k3d cluster delete bonus
 
 rm -- "$0"
 SCRIPT
 
-chmod +x portforward.sh clean.sh
-
+chmod +x gitlabfwd.sh portforward.sh clean.sh
+ 
 # Add Docker's official GPG key:
 sudo apt-get update -y
 sudo apt-get install ca-certificates curl -y
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
+sudo chmod 777 /var/run/docker.sock
 
 # Add the repository to Apt sources:
 echo \
@@ -127,7 +189,7 @@ echo -e "\nWaiting for argocd deployment...\n"
 ./kubectl wait --for=condition=available --timeout 60s deployment -l app.kubernetes.io/name=argocd-application-controller -n argocd 
 
 echo ""
-read -n 1 -s -r -p "Upload your files to gitlab using portforward.sh and press any key to resume..."
+read -n 1 -s -r -p "Upload your files to gitlab using gitlabfwd.sh and press any key to resume..."
 echo ""
 
 ./kubectl apply -f argo-application.yaml
